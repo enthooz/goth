@@ -1,8 +1,8 @@
 package uber_test
 
 import (
-	"github.com/markbates/goth"
-	"github.com/markbates/goth/providers/uber"
+	"github.com/enthooz/goth"
+	"github.com/enthooz/goth/providers/uber"
 	"github.com/stretchr/testify/assert"
 	"os"
 	"testing"
