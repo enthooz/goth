@@ -162,16 +162,21 @@ func (p *Provider) getEmail(user *goth.User, sess *Session) error {
 		return fmt.Errorf("%s responded with a %d trying to fetch email addresses", p.providerName, response.StatusCode)
 	}
 
-	var mailList = []struct {
+	type MailItem struct {
 		Email     string `json:"email"`
 		Primary   bool   `json:"is_primary"`
 		Confirmed bool   `json:"is_confirmed"`
-	}{}
+	}
+	type MailList struct {
+		Values []MailItem `json:"values"`
+	}
+	mailList := MailList{}
 	err = json.NewDecoder(response.Body).Decode(&mailList)
 	if err != nil {
 		return err
 	}
-	for _, v := range mailList {
+
+	for _, v := range mailList.Values {
 		if v.Primary && v.Confirmed {
 			user.Email = v.Email
 			return nil
@@ -196,9 +201,7 @@ func newConfig(provider *Provider, scopes []string) *oauth2.Config {
 		Scopes: []string{},
 	}
 
-	for _, scope := range scopes {
-		c.Scopes = append(c.Scopes, scope)
-	}
+	c.Scopes = append(c.Scopes, scopes...)
 
 	return c
 }
